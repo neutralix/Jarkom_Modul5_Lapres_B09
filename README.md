@@ -156,17 +156,17 @@ Lalu install DHCP Relay pada UML BATU dan KEDIRI dan masukan IP DHCP Server (UML
 ## IPTables
 ### Nomor 1
 Mengkonfigurasi SURABAYA menggunakan iptables, namun tidak menggunakan MASQUERADE  
-`iptables -t nat -A POSTROUTING -s 192.168.0.0/16 -o eth0 -j SNAT --to-source 10.151.74.42`
+`iptables -t nat -A POSTROUTING -s 192.168.0.0/16 -o eth0 -j SNAT --to-source 10.151.74.42`  
 Penjelasan :
 - Menggunakan POSTROUTING untuk mengubah source menjadi ip eht0 surabaya.
 ### Nomor 2
 Mendrop semua akses SSH dari luar Topologi (UML) pada DHCP dan DNS Server pada SURABAYA  
-`iptables -A FORWARD -p tcp --dport 22 -d 10.151.83.80/29 -i eth0 -j DROP`
+`iptables -A FORWARD -p tcp --dport 22 -d 10.151.83.80/29 -i eth0 -j DROP`  
 Penjelasan :
 - Menggunakan FORWARD untuk drop semua koneksi yang destinasinya subnet IP DMZ dengan port 22.
 ### Nomor 3
 Membatasi DHCP dan DNS Server hanya boleh menerima maksimal 3 koneksi ICMP secara bersamaan yang berasal dari mana saja menggunakan iptables pada masing-masing server, selebihnya di DROP.  
-`iptables -A INPUT -p icmp -m connlimit --connlimit-above 3 --connlimit-mask 0 -j DROP`
+`iptables -A INPUT -p icmp -m connlimit --connlimit-above 3 --connlimit-mask 0 -j DROP`  
 Penjelasan :
 - Script iptables dijalankan di kedua server.
 - Menggunakan INPUT untuk drop koneksi apabila koneksi diatas 3.
@@ -179,7 +179,7 @@ iptables -A INPUT -s 192.168.0.0/24 -m time --timestart 17:00 --timestop 00:00 -
 iptables -A INPUT -s 192.168.0.0/24 -m time --timestart 00:00 --timestop 07:00 -j ACCEPT
 iptables -A INPUT -s 192.168.4.0/24 -j REJECT
 iptables -A INPUT -s 192.168.0.0/24 -j REJECT
-```
+```  
 Penjelasan :
 - Menggunakan INPUT untuk menerima koneksi dari subnet SIDOARJO apabila sesuai ketentuan.
 - Menggunakan INPUT untuk menerima koneksi dari subnet GRESIK apabila sesuai ketentuan.
@@ -191,7 +191,7 @@ iptables -A PREROUTING -t nat -p tcp -d 192.168.1.20 --dport 80 -m statistic --m
 iptables -A PREROUTING -t nat -p tcp -d 192.168.1.20 --dport 80 -j DNAT --to-destination 192.168.1.3
 iptables -t nat -A POSTROUTING -p tcp --dport 80 -d 192.168.1.2 -j SNAT --to-source 192.168.1.20
 iptables -t nat -A POSTROUTING -p tcp --dport 80 -d 192.168.1.3 -j SNAT --to-source 192.168.1.20
-```
+```  
 Penjelasan : 
 - Mengunakan PREROUTING untuk mengubah tujuan paket dari yang asalnya ke DNS Server dengan port 80 jadi ke Web Server.
 - Didistribusikan bergantian dengan menggunakan statistic opsi every diisi value 2.
@@ -210,7 +210,7 @@ iptables -N LOGGING
 iptables -A INPUT -p icmp -m connlimit --connlimit-above 3 --connlimit-mask 0 -j LOGGING
 iptables -A LOGGING -m limit --limit 2/min -j LOG --log-prefix "IPTables-Dropped: " --log-level info
 iptables -A LOGGING -j DROP
-```
+```  
 Penjelasan :
 - Buat table iptables baru untuk LOGGING.
 - Menggubah iptables sebelumnya yang memiliki rule DROP menjadi LOGGING.
